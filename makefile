@@ -1,13 +1,17 @@
 flags = -Wall -std=c99
 nome = conway
+objs = main.o helper.o
 
 all: $(nome)
 
-$(nome): main.o
-	gcc -o $(nome) main.o $(flags)
+$(nome): $(objs)
+	gcc -o $(nome) $(objs) $(flags)
 
 main.o: main.c
 	gcc -c main.c $(flags)
+
+helper.o: helper.c
+	gcc -c helper.c $(flags)
 
 clean:
 	rm -f *~ *.o

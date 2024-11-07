@@ -1,14 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-
-void imprimirMatriz(int** A, int n, int m) {
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < m-1; j++) {
-            printf("%d ", A[i][j]);
-        }
-        printf("%d\n", A[i][m-1]);
-    }
-}
+#include "helper.h"
 
 int main() {
     int n, m, c;
@@ -26,7 +18,26 @@ int main() {
         }
     }
 
-    imprimirMatriz(matriz, n, m);
+    // imprimirMatriz(matriz, n, m);
+
+    FILE* inputFile = fopen("SATinput.txt", "w"); 
+    if (inputFile == NULL) {
+        fprintf(stderr, "Failed to open file\n");
+        exit(0);
+    }
+    
+    // generateSAT(inputFile, matriz, n, m);
+
+    FILE* outputFile = fopen("SAToutput.txt", "r");
+    if (outputFile == NULL) {
+        fprintf(stderr, "Failed to read file SAToutput.txt\n");
+    } else {
+        convertSATtoArray(outputFile, matriz, n, m);
+        imprimirMatriz(matriz, n, m);
+        fclose(outputFile);
+    }
+
+    fclose(inputFile);
 
     for (int i = 0; i < n; i++) {
         free(matriz[i]);
