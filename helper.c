@@ -153,6 +153,32 @@ void generateLife(FILE* file, int n, int m, int i, int j) {
     }
 }
 
+void generateBorders(FILE* file, int n, int m) {
+    // Top row (i = 0)
+    for (int j = 0; j < m; j++) {
+        int varIdx = 0 * m + j + 1;
+        fprintf(file, "-%d 0\n", varIdx); // Force cell to be dead
+    }
+
+    // Bottom row (i = n-1)
+    for (int j = 0; j < m; j++) {
+        int varIdx = (n - 1) * m + j + 1;
+        fprintf(file, "-%d 0\n", varIdx); // Force cell to be dead
+    }
+
+    // Left column (j = 0)
+    for (int i = 1; i < n-1; i++) {
+        int varIdx = i * m + 0 + 1;
+        fprintf(file, "-%d 0\n", varIdx); // Force cell to be dead
+    }
+
+    // Right column (j = m-1)
+    for (int i = 1; i < n-1; i++) {
+        int varIdx = i * m + (m - 1) + 1;
+        fprintf(file, "-%d 0\n", varIdx); // Force cell to be dead
+    }
+}
+
 void generateSAT(FILE* file, int** A, int n, int m) {
     int varNumber = n * m;
     
@@ -167,15 +193,19 @@ void generateSAT(FILE* file, int** A, int n, int m) {
         }
     }
 
-    fprintf(file, "p cnf %d %d\n", varNumber, clauseCount);
+    fprintf(file, "p cnf %d %d\n", varNumber, clauseCount+ 2*(n+m-2));
+
+    generateBorders(file, n, m);
 
     for (int i = 1; i < n-1; i++) {
         for (int j = 1; j < m-1; j++) {
             if (A[i][j]) {
+                printf("Generating loneliness, stagnation and overcrowding for cell (%d, %d)\n", i, j);
                 generateLoneliness(file, n, m, i, j);
                 generateStagnation(file, n, m, i, j);
                 generateOvercrowding(file, n, m, i, j);
             } else {
+                printf("Generating preservation and life for cell (%d, %d)\n", i, j);
                 generatePreservation(file, n, m, i, j);
                 generateLife(file, n, m, i, j);
             }
@@ -198,6 +228,28 @@ void convertSATtoArray(FILE* file, int** A, int n, int m) {
         }
     }
     free(line);
+}
+
+int** extendArray(int** A, int n, int m) {
+    int newN = n + 2;
+    int newM = m + 2;
+
+    int** newArray = malloc(sizeof(int*) * newN);
+    for (int i = 0; i < newN; i++) {
+        newArray[i] = malloc(sizeof(int) * newM);
+    }
+
+    for (int i = 0; i < newN; i++) {
+        for (int j = 0; j < newM; j++) {
+            if (i == 0 || i == newN-1 || j == 0 || j == newM-1) {
+                newArray[i][j] = 0;
+            } else {
+                newArray[i][j] = A[i-1][j-1];
+            }
+        }
+    }
+
+    return newArray;
 }
 
 // 3 3

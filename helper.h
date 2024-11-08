@@ -23,4 +23,6 @@ void generateSAT(FILE* file, int** A, int n, int m);
 
 void convertSATtoArray(FILE* file, int** A, int n, int m);
 
+int** extendArray(int** A, int n, int m);
+
 #endif
