@@ -1,7 +1,13 @@
 {
     "files.associations": {
+<<<<<<< HEAD
         "Debug.C": "cpp",
         "Main.C": "cpp",
+=======
+        "PbSolver_convertSort.C": "cpp",
+        "PbSolver_convert.C": "cpp",
+        "MiniSat.C": "cpp",
+>>>>>>> d596205 (teste)
         "PbParser.C": "cpp"
     }
 }
