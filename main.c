@@ -52,10 +52,16 @@ int main() {
 
     fclose(inputFile);
 
-    for (int i = 0; i < n; i++) {
-        free(arr[i]);
-    }
-    free(arr);
+    // for (int i = 0; i < n; i++) {
+    //     free(arr[i]);
+    // }
+    // free(arr);
 
     return 0;
 }
+
+// 4 6
+// 0 0 0 0 0 0
+// 0 0 1 1 0 0
+// 0 0 0 1 0 0
+// 0 0 0 1 0 0

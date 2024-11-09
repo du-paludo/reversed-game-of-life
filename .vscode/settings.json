@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "Debug.C": "cpp",
+        "Main.C": "cpp",
+        "PbParser.C": "cpp"
+    }
+}

@@ -21,8 +21,6 @@ void generateLife(FILE* file, int n, int m, int i, int j);
 
 void generateSAT(FILE* file, int** A, int n, int m);
 
-void convertSATtoArray(FILE* file, int** A, int n, int m);
-
 int** extendArray(int** A, int n, int m);
 
 #endif

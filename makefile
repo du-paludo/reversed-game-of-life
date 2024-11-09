@@ -1,4 +1,4 @@
-flags = -Wall -std=c99
+flags = -Wall -std=c99 -lm
 nome = conway
 objs = main.o helper.o
 

@@ -11,9 +11,9 @@ void printArray(int** A, int n, int m) {
 }
 
 void convertSATtoArray(FILE* file, int** A, int n, int m) {
-    char* line = malloc(sizeof(char) * 10);
+    // char* line = malloc(sizeof(char) * 10);
     int val;
-    fgets(line, 4, file);
+    // fgets(line, 4, file);
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < m; j++) {
             fscanf(file, "%d ", &val);
@@ -24,7 +24,7 @@ void convertSATtoArray(FILE* file, int** A, int n, int m) {
             }
         }
     }
-    free(line);
+    // free(line);
 }
 
 int main(int argc, char* argv[]) {
