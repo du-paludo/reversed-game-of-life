@@ -1,8 +1,0 @@
-{
-    "files.associations": {
-        "PbSolver_convertAdd.C": "cpp",
-        "PbSolver_convertSort.C": "cpp",
-        "PbSolver_convertBdd.C": "cpp",
-        "PbSolver_convert.C": "cpp"
-    }
-}
