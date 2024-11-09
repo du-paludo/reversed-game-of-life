@@ -6,38 +6,41 @@
 #define RANDOM 1
 
 int main() {
-    int n, m, c;
-    fscanf(stdin, "%d %d\n", &n, &m);
+    int n, m;
+    fscanf(stdin, "%d %d", &n, &m);
 
-    int** matriz = malloc(sizeof(int*) * n);
+    int** arr = malloc(sizeof(int*) * n);
     for (int i = 0; i < m; i++) {
-        matriz[i] = malloc(sizeof(int) * m);
+        arr[i] = malloc(sizeof(int) * m);
     }
 
     srand(time(NULL));
 
     if (RANDOM) {
         for (int j = 0; j < m; j++) {
-            matriz[0][j] = rand() % 2;
-            matriz[n-1][j] = rand() % 2;
+            arr[0][j] = rand() % 2;
+            arr[n-1][j] = rand() % 2;
         }
         for (int i = 1; i < n-1; i++) {
-            matriz[i][0] = rand() % 2;
-            matriz[i][m-1] = rand() % 2;
+            arr[i][0] = rand() % 2;
+            arr[i][m-1] = rand() % 2;
+        }
+        for (int i = 1; i < n-1; i++) {
+            for (int j = 1; j < m-1; j++) {
+                arr[i][j] = rand() % 2;
+            }
         }
     } else {
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
-                fscanf(stdin, "%d", &c);
-                matriz[i][j] = c;
+                fscanf(stdin, "%d", &arr[i][j]);
             }
         }
     }
 
-    int** extendedArray = extendArray(matriz, n, m);
+    int** extendedArray = extendArray(arr, n, m);
 
     printf("\n");
-    imprimirMatriz(extendedArray, n+2, m+2);
 
     FILE* inputFile = fopen("SATinput.txt", "w"); 
     if (inputFile == NULL) {
@@ -50,9 +53,9 @@ int main() {
     fclose(inputFile);
 
     for (int i = 0; i < n; i++) {
-        free(matriz[i]);
+        free(arr[i]);
     }
-    free(matriz);
+    free(arr);
 
     return 0;
 }
