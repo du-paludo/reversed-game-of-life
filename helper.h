@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-void imprimirMatriz(int** A, int n, int m);
+void printArray(int** A, int n, int m);
 
 int nCr(int n, int r);
 

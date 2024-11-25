@@ -3,7 +3,7 @@
 const int row_offset[8] = {-1, -1, -1,  0,  0,  1,  1,  1}; // UPPER_LEFT, UPPER, UPPER_RIGHT, LEFT, RIGHT, LOWER_LEFT, LOWER, LOWER_RIGHT
 const int col_offset[8] = {-1,  0,  1, -1,  1, -1,  0,  1};
 
-void imprimirMatriz(int** A, int n, int m) {
+void printArray(int** A, int n, int m) {
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < m-1; j++) {
             printf("%d ", A[i][j]);
@@ -239,12 +239,12 @@ void generateSAT(FILE* file, int** A, int n, int m) {
     for (int i = 1; i < n-1; i++) {
         for (int j = 1; j < m-1; j++) {
             if (A[i][j]) {
-                printf("Generating loneliness, stagnation and overcrowding for cell (%d, %d)\n", i, j);
+                // printf("Generating loneliness, stagnation and overcrowding for cell (%d, %d)\n", i, j);
                 generateLoneliness(file, n, m, i, j);
                 generateStagnation(file, n, m, i, j);
                 generateOvercrowding(file, n, m, i, j);
             } else {
-                printf("Generating preservation and life for cell (%d, %d)\n", i, j);
+                // printf("Generating preservation and life for cell (%d, %d)\n", i, j);
                 generatePreservation(file, n, m, i, j);
                 generateLife(file, n, m, i, j);
             }

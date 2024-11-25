@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "helper.h"
+#include "convertFromSAT.h"
 #include <time.h>
 
 #define RANDOM 1
@@ -40,7 +41,10 @@ int main() {
 
     int** extendedArray = extendArray(arr, n, m);
 
-    printf("\n");
+    printArray(arr, n, m);
+    // printArray(extendedArray, n+2, m+2);
+
+    // printf("\n");
 
     FILE* inputFile = fopen("SATinput.txt", "w"); 
     if (inputFile == NULL) {
@@ -48,14 +52,15 @@ int main() {
         exit(0);
     }
     
-    generateSAT(inputFile, extendedArray, n+2, m+2);
+    printf("Generating SAT input file...\n");
 
+    generateSAT(inputFile, extendedArray, n+2, m+2);
     fclose(inputFile);
 
-    // for (int i = 0; i < n; i++) {
-    //     free(arr[i]);
-    // }
-    // free(arr);
+    printf("Solving SAT problem...\n");
+
+    system("./open-wbo/open-wbo SATinput.txt > SAToutput.txt");
+    readOutputFile(n, m);
 
     return 0;
 }

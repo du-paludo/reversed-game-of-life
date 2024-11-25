@@ -1,7 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
-void printArray(int** A, int n, int m) {
+void printExtendedArray(int** A, int n, int m) {
     for (int i = 1; i < n-1; i++) {
         for (int j = 1; j < m-2; j++) {
             printf("%d ", A[i][j]);
@@ -10,27 +11,44 @@ void printArray(int** A, int n, int m) {
     }
 }
 
-void convertSATtoArray(FILE* file, int** A, int n, int m) {
-    // char* line = malloc(sizeof(char) * 10);
-    int val;
-    // fgets(line, 4, file);
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < m; j++) {
-            fscanf(file, "%d ", &val);
-            if (val < 0) {
-                A[i][j] = 0;
-            } else {
-                A[i][j] = 1;
+int convertSATtoArray(FILE* file, int** A, int n, int m) {
+    char line[10000];
+    int count = 0;
+    while (fgets(line, sizeof(line), file)) {
+        // Check if the line is "s UNSATISFIABLE"
+        if (strncmp(line, "s UNSATISFIABLE", 15) == 0) {
+            printf("The problem is UNSATISFIABLE.\n");
+            return 0;
+        }
+        // Check if the line starts with 'v'
+        if (line[0] == 'v' && line[1] == ' ') {
+            char *token = strtok(line + 2, " "); // Skip the "v "
+            for (int i = 0; i < n; ++i) {
+                for (int j = 0; j < m; ++j) {
+                    if (!token) {
+                        fprintf(stderr, "Error: Not enough values for the array.\n");
+                        fclose(file);
+                        return 0;
+                    }
+                    if (atoi(token) < 0) {
+                        A[i][j] = 0;
+                    } else {
+                        A[i][j] = 1;
+                        count++;
+                    }
+                    token = strtok(NULL, " ");
+                }
             }
+            break;
         }
     }
-    // free(line);
+    return 1;
+    // printf("Number of 1s: %d\n", count);
 }
 
-int main(int argc, char* argv[]) {
-    int n = atoi(argv[1]) + 2;
-    int m = atoi(argv[2]) + 2;
-    // fscanf(stdin, "%d %d\n", &n, &m);
+void readOutputFile(int n, int m) {
+    n += 2;
+    m += 2;
 
     int **arr = malloc(sizeof(int*) * n);
     for (int i = 0; i < n; i++) {
@@ -41,8 +59,9 @@ int main(int argc, char* argv[]) {
     if (outputFile == NULL) {
         fprintf(stderr, "Failed to read file SAToutput.txt\n");
     } else {
-        convertSATtoArray(outputFile, arr, n, m);
-        printArray(arr, n, m);
+        if (convertSATtoArray(outputFile, arr, n, m)) {
+            printExtendedArray(arr, n, m);
+        }
         fclose(outputFile);
     }
 
@@ -50,6 +69,4 @@ int main(int argc, char* argv[]) {
         free(arr[i]);
     }
     free(arr);
-
-    return 0;
 }

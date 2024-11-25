@@ -1,14 +1,14 @@
 flags = -Wall -std=c99 -lm
 nome = conway
-objs = main.o helper.o
+objs = main.o helper.o convertFromSAT.o
 
-all: $(nome) convertFromSAT
+all: $(nome)
 
 $(nome): $(objs)
 	gcc -o $(nome) $(objs) $(flags)
 
-convertFromSAT: convertFromSAT.c
-	gcc -o convertFromSAT convertFromSAT.c $(flags)
+convertFromSAT.o: convertFromSAT.c
+	gcc -c convertFromSAT.c $(flags)
 
 main.o: main.c
 	gcc -c main.c $(flags)
