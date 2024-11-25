@@ -19,12 +19,12 @@ int main() {
 
     if (RANDOM) {
         for (int j = 0; j < m; j++) {
-            arr[0][j] = rand() % 2;
-            arr[n-1][j] = rand() % 2;
+            arr[0][j] = 0;
+            arr[n-1][j] = 0;
         }
         for (int i = 1; i < n-1; i++) {
-            arr[i][0] = rand() % 2;
-            arr[i][m-1] = rand() % 2;
+            arr[i][0] = 0;
+            arr[i][m-1] = 0;
         }
         for (int i = 1; i < n-1; i++) {
             for (int j = 1; j < m-1; j++) {
