@@ -19,7 +19,7 @@ void generatePreservation(FILE* file, int n, int m, int i, int j);
 
 void generateLife(FILE* file, int n, int m, int i, int j);
 
-void generateSAT(FILE* file, int** A, int n, int m);
+void generateSAT(FILE* file, int** A, int n, int m, int oldN, int oldM);
 
 int** extendArray(int** A, int n, int m);
 

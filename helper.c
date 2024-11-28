@@ -208,13 +208,15 @@ void generateBorders(FILE* file, int n, int m) {
     }
 }
 
-void generateSAT(FILE* file, int** A, int n, int m) {
+void generateSAT(FILE* file, int** A, int n, int m, int oldN, int oldM) {
     int varNumber = n * m;
     
     int clauseCount = varNumber;
-    for (int i = 1; i < n-1; i++) {
-        for (int j = 1; j < m-1; j++) {
-            if (A[i][j]) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            if (i == 0 || i == n-1 || j == 0 || j == m-1) {
+                clauseCount++;
+            } else if (A[i][j]) {
                 clauseCount += nCr(8, 7) + nCr(8, 2) + nCr(8, 4);
             } else {
                 clauseCount += nCr(8, 2) + nCr(8, 3);
@@ -223,7 +225,7 @@ void generateSAT(FILE* file, int** A, int n, int m) {
     }
 
     // fprintf(file, "p cnf %d %d\n", varNumber, clauseCount+ 2*(n+m-2)); // CNF format
-    fprintf(file, "p wcnf %d %d %d\n", varNumber, clauseCount+ 2*(n+m-2), varNumber+1); // WCNF format
+    fprintf(file, "p wcnf %d %d %d\n", varNumber, clauseCount, varNumber+1); // WCNF format
     // OPB format
     // fprintf(file, "min: ");
 
@@ -234,11 +236,14 @@ void generateSAT(FILE* file, int** A, int n, int m) {
     }
     // fprintf(file, "+1x%d;\n", varNumber);
 
-    generateBorders(file, n, m);
+    // generateBorders(file, n, m);
 
-    for (int i = 1; i < n-1; i++) {
-        for (int j = 1; j < m-1; j++) {
-            if (A[i][j]) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            if (i == 0 || i == oldN-1 || j == 0 || j == oldM-1) {
+                int varIdx = (n - 1) * m + j + 1;
+                fprintf(file, "%d -%d 0\n", n*m+1, varIdx);
+            } else if (A[i][j]) {
                 // printf("Generating loneliness, stagnation and overcrowding for cell (%d, %d)\n", i, j);
                 generateLoneliness(file, n, m, i, j);
                 generateStagnation(file, n, m, i, j);
