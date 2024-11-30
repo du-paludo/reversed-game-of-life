@@ -246,15 +246,29 @@ void generateSAT(FILE* file, int** A, int n, int m) {
 
     for (int i = 1; i < n-1; i++) {
         for (int j = 1; j < m-1; j++) {
+
             if (A[i][j]) {
                 // printf("Generating loneliness, stagnation and overcrowding for cell (%d, %d)\n", i, j);
                 generateLoneliness(file, n, m, i, j);
                 generateStagnation(file, n, m, i, j);
                 generateOvercrowding(file, n, m, i, j);
             } else {
-                // printf("Generating preservation and life for cell (%d, %d)\n", i, j);
-                generatePreservation(file, n, m, i, j);
-                generateLife(file, n, m, i, j);
+                int teste = 1;
+                for (int k = 0; k < 8; k++) {
+                    if (A[i + row_offset[k]][j + col_offset[k]]) {
+                        teste = 0;
+                        break;
+                    }
+                }
+                // if (teste) {
+                    // fprintf(file, "%d ", n*m+1);
+                    // fprintf(file, "-%d 0\n", i * m + j + 1);
+                    // fprintf(file, "-1x%d 0\n", i * m + j + 1);
+                // } else {
+                    // printf("Generating preservation and life for cell (%d, %d)\n", i, j);
+                    generatePreservation(file, n, m, i, j);
+                    generateLife(file, n, m, i, j);
+                // }
             }
         }
     }
