@@ -3,6 +3,15 @@
 const int row_offset[8] = {-1, -1, -1,  0,  0,  1,  1,  1}; // UPPER_LEFT, UPPER, UPPER_RIGHT, LEFT, RIGHT, LOWER_LEFT, LOWER, LOWER_RIGHT
 const int col_offset[8] = {-1,  0,  1, -1,  1, -1,  0,  1};
 
+void printArrayWithoutBorders(int** A, int n, int m) {
+    for (int i = 1; i < n-1; i++) {
+        for (int j = 1; j < m-2; j++) {
+            printf("%d ", A[i][j]);
+        }
+        printf("%d\n", A[i][m-2]);
+    }
+}
+
 void printArray(int** A, int n, int m) {
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < m-1; j++) {
@@ -156,7 +165,6 @@ void generateLife(FILE* file, int n, int m, int i, int j) {
 
         if (count == 3) {
             fprintf(file, "%d ", n*m+1);
-            fprintf(file, "%d ", i * m + j + 1);
             // fprintf(file, "+1x%d ", i * m + j + 1);
             for (int k = 0; k < 8; k++) {
                 int varIdx = (i + row_offset[k]) * m + (j + col_offset[k]) + 1;
@@ -210,8 +218,9 @@ void generateBorders(FILE* file, int n, int m) {
 
 void generateSAT(FILE* file, int** A, int n, int m) {
     int varNumber = n * m;
-    
+
     int clauseCount = varNumber;
+    // int clauseCount = 0;
     for (int i = 1; i < n-1; i++) {
         for (int j = 1; j < m-1; j++) {
             if (A[i][j]) {
@@ -232,7 +241,6 @@ void generateSAT(FILE* file, int** A, int n, int m) {
         fprintf(file, "1 -%d 0\n", i);
         // fprintf(file, "+1x%d ", i);
     }
-    // fprintf(file, "+1x%d;\n", varNumber);
 
     generateBorders(file, n, m);
 

@@ -4,7 +4,7 @@
 #include "convertFromSAT.h"
 #include <time.h>
 
-#define RANDOM 1
+#define RANDOM 0
 
 int main() {
     int n, m;
@@ -40,9 +40,12 @@ int main() {
     }
 
     int** extendedArray = extendArray(arr, n, m);
+    n += 2;
+    m += 2;
 
-    printArray(arr, n, m);
-    // printArray(extendedArray, n+2, m+2);
+    if (RANDOM) {
+        printArrayWithoutBorders(extendedArray, n, m);
+    }
 
     // printf("\n");
 
@@ -54,7 +57,7 @@ int main() {
     
     printf("Generating SAT input file...\n");
 
-    generateSAT(inputFile, extendedArray, n+2, m+2);
+    generateSAT(inputFile, extendedArray, n, m);
     fclose(inputFile);
 
     printf("Solving SAT problem...\n");
