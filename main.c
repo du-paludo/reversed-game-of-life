@@ -4,7 +4,7 @@
 #include "convertFromSAT.h"
 #include <time.h>
 
-#define RANDOM 0
+#define RANDOM 1
 
 int main() {
     int n, m;

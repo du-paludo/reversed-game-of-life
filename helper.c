@@ -216,30 +216,62 @@ void generateBorders(FILE* file, int n, int m) {
     }
 }
 
+int verifyAllNeighborsZero(int** A, int n, int m, int x, int y) {
+    // Iterate over the cell's 8 neighbors
+    for (int i = 0; i < 8; i++) {
+        int nx = x + row_offset[i];
+        int ny = y + col_offset[i];
+
+        // Skip out-of-bounds neighbors
+        if (nx < 0 || ny < 0 || nx >= n || ny >= m) continue;
+
+        // Check if the neighbor is non-zero
+        if (A[nx][ny] != 0) {
+            return 0; // Not all neighbors are zero
+        }
+
+        // Check the neighbors of the neighbor (second-level neighbors)
+        for (int j = 0; j < 8; j++) {
+            int nnx = nx + row_offset[j];
+            int nny = ny + col_offset[j];
+
+            // Skip out-of-bounds second-level neighbors
+            if (nnx < 0 || nny < 0 || nnx >= n || nny >= m) continue;
+
+            // Check if the second-level neighbor is non-zero
+            if (A[nnx][nny] != 0) {
+                return 0; // Not all second-level neighbors are zero
+            }
+        }
+    }
+
+    return 1; // All neighbors and their neighbors are zero
+}
+
 void generateSAT(FILE* file, int** A, int n, int m) {
     int varNumber = n * m;
 
-    int clauseCount = varNumber;
+    int clauseCount = varNumber + 2*(n+m-2);
     // int clauseCount = 0;
     for (int i = 1; i < n-1; i++) {
         for (int j = 1; j < m-1; j++) {
             if (A[i][j]) {
                 clauseCount += nCr(8, 7) + nCr(8, 2) + nCr(8, 4);
             } else {
-                clauseCount += nCr(8, 2) + nCr(8, 3);
+                if (verifyAllNeighborsZero(A, n, m, i, j)) {
+                    clauseCount += 1;
+                } else {
+                    clauseCount += nCr(8, 2) + nCr(8, 3);
+                }
             }
         }
     }
 
-    // fprintf(file, "p cnf %d %d\n", varNumber, clauseCount+ 2*(n+m-2)); // CNF format
-    fprintf(file, "p wcnf %d %d %d\n", varNumber, clauseCount+ 2*(n+m-2), varNumber+1); // WCNF format
-    // OPB format
-    // fprintf(file, "min: ");
+    fprintf(file, "p wcnf %d %d %d\n", varNumber, clauseCount, varNumber+1); // WCNF format
 
     // Generate soft clauses
     for (int i = 1; i <= varNumber; i++) {
         fprintf(file, "1 -%d 0\n", i);
-        // fprintf(file, "+1x%d ", i);
     }
 
     generateBorders(file, n, m);
@@ -261,14 +293,13 @@ void generateSAT(FILE* file, int** A, int n, int m) {
                     }
                 }
                 // if (teste) {
-                    // fprintf(file, "%d ", n*m+1);
-                    // fprintf(file, "-%d 0\n", i * m + j + 1);
-                    // fprintf(file, "-1x%d 0\n", i * m + j + 1);
-                // } else {
-                    // printf("Generating preservation and life for cell (%d, %d)\n", i, j);
+                if (verifyAllNeighborsZero(A, n, m, i, j)) {
+                    fprintf(file, "%d ", n*m+1);
+                    fprintf(file, "-%d 0\n", i * m + j + 1);
+                } else {
                     generatePreservation(file, n, m, i, j);
                     generateLife(file, n, m, i, j);
-                // }
+                }
             }
         }
     }

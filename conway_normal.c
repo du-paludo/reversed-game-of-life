@@ -79,17 +79,34 @@ int main(){
 
     // Escreve o tamanho da matriz na primeira linha
     fprintf(output, "%d %d\n", row, col);
+    // fprintf(output, "%d %d\n", row+2, col+2);
 
     // Imprime a próxima geração na tela
     printf("\nPróxima Geração:\n");
+    // for (j = 0; j < col+1; j++) {
+    //     printf("0 ");
+    //     fprintf(output, "0 ");
+    // }
+    // printf("0\n");
+    // fprintf(output, "0\n");
     for(i = 0; i < row; i++){
+        // printf("0 ");
+        // fprintf(output, "0 ");
         for(j = 0; j < col; j++){
             fprintf(output, "%d ", b[i][j]);
             printf("%d ", b[i][j]);
         }
-        printf("\n");
         fprintf(output, "\n");
+        printf("\n");
+        // printf("0\n");
+        // fprintf(output, "0\n");
     }
+    // for (j = 0; j < col+1; j++) {
+    //     printf("0 ");
+    //     fprintf(output, "0 ");
+    // }
+    // printf("0\n");
+    // fprintf(output, "0\n");
 
     // Fecha o arquivo de saída
     fclose(output);
