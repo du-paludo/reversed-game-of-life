@@ -61,15 +61,25 @@ int main(int argc, char* argv[]) {
         exit(0);
     }
     
-    printf("Generating SAT input file...\n");
+    // printf("Generating SAT input file...\n");
 
     generateSAT(inputFile, extendedArray, n, m);
     fclose(inputFile);
 
-    printf("Solving SAT problem...\n");
+    // printf("Solving SAT problem...\n");
 
     system("./open-wbo/open-wbo SATinput.txt > SAToutput.txt");
     readOutputFile(n, m);
+
+    for (int i = 0; i < n-2; i++) {
+        free(arr[i]);
+    }
+    free(arr);
+
+    for (int i = 0; i < n; i++) {
+        free(extendedArray[i]);
+    }
+    free(extendedArray);
 
     return 0;
 }

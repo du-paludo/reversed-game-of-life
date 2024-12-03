@@ -36,7 +36,7 @@ int convertSATtoArray(FILE* file, int** A, int n, int m) {
             break;
         }
     }
-    printf("Number of 1s: %d\n", count);
+    // printf("Number of 1s: %d\n", count);
     return 1;
 }
 
