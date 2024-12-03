@@ -20,7 +20,7 @@ int count_live_neighbour_cell(int a[row][col], int r, int c){
     return count;
 }
 
-int main(){
+int main() {
     // Abre o arquivo para leitura
     FILE *file = fopen("input.txt", "r");
     if (file == NULL) {

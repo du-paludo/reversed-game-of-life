@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "convertFromSAT.h"
 #include "helper.h"
 
 int convertSATtoArray(FILE* file, int** A, int n, int m) {
@@ -44,8 +45,6 @@ void readOutputFile(int n, int m) {
     for (int i = 0; i < n; i++) {
         arr[i] = malloc(sizeof(int) * m);
     }
-
-    printf("%d %d\n", n, m);
 
     FILE* outputFile = fopen("SAToutput.txt", "r");
     if (outputFile == NULL) {

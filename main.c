@@ -1,14 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
+#include <string.h>
+
 #include "helper.h"
 #include "convertFromSAT.h"
-#include <time.h>
+#include "convertToSAT.h"
 
-#define RANDOM 1
-
-int main() {
+int main(int argc, char* argv[]) {
+    int random = 0;
     int n, m;
     fscanf(stdin, "%d %d", &n, &m);
+
+    if (argc > 1) {
+        if (strcmp(argv[1], "random") == 0) {
+            random = 1;
+        }
+    }
 
     int** arr = malloc(sizeof(int*) * n);
     for (int i = 0; i < m; i++) {
@@ -17,7 +25,7 @@ int main() {
 
     srand(time(NULL));
 
-    if (RANDOM) {
+    if (random) {
         for (int j = 0; j < m; j++) {
             arr[0][j] = 0;
             arr[n-1][j] = 0;
@@ -43,11 +51,9 @@ int main() {
     n += 2;
     m += 2;
 
-    if (RANDOM) {
+    if (random) {
         printArrayWithoutBorders(extendedArray, n, m);
     }
-
-    // printf("\n");
 
     FILE* inputFile = fopen("SATinput.txt", "w"); 
     if (inputFile == NULL) {
@@ -67,9 +73,3 @@ int main() {
 
     return 0;
 }
-
-// 4 6
-// 0 0 0 0 0 0
-// 0 0 1 1 0 0
-// 0 0 0 1 0 0
-// 0 0 0 1 0 0
