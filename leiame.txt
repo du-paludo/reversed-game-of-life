@@ -1,3 +1,61 @@
 Alunos:
 - Eduardo Stefanel Paludo (GRR20210581)
 - Inaiê Moscal Zambonin (GRR20210578)
+
+Jogo da Vida Reverso - SAT Solver
+
+Esse trabalho implementa uma solução para o reverter uma instância do Jogo da Vida de Conway a um estado anterior, minimizando o número de células vivas.
+
+Como executar
+
+Para compilar todos os arquivos necessários:
+
+./compila-tudo.sh
+
+Para executar, há duas opções: 
+- Utilizar um arquivo .txt com uma matriz, passando-o por parâmetro. Nesse caso, o arquivo .txt deve ser formatado com o tamanho da matriz (linha, coluna) na primeira linha, 
+e em seguida a matriz.
+
+./conway < arquivo.txt
+
+- Utiliza uma matriz aleatória gerada pelo programa. Nesse caso, é necessário fornecer o tamanho da matriz (linha, coluna) após executar o programa:
+
+./conway random
+20 20
+
+Implementação
+
+Para resolver o problema, o código foi estruturado em quatro arquivos principais:
+
+main.c
+helper.c
+convertFromSAT.c
+convertToSAT.c
+
+No arquivo main.c, é feito o armazenamento da matriz de entrada e, no caso de matrizes aleatórias, é feito também a geração dessa matriz.Para solucionar corretamente, é considerado 
+uma matriz com as colunas e linhas de borda zeradas, portanto a estrutura extendedArray é criada com a função extendArray, que apenas adiciona as bordas zeradas A matriz original. 
+O arquivo SATinput.txt, usado na resolução do SAT com o SAT Solver, é então criado.
+
+É chamada então a função generateSAT com a matriz extendida, onde é convertido a instância de entrada do Jogo da Vida para uma fórmula SAT, em CNF, para ser posteriormente processada 
+pelo SAT Solver. O número de cláusulas - clauseCount, é calculado utilizando o número total de variáveis booleanas no problema (n*m), e as cláusulas adicionais para as bordas da matriz,
+por isso n e m, excluindo os cantos, para não serem contabilizados duas vezes. Nas bordas, as condições são epecíficas para não considerar interações com células que não fazem parte 
+da matriz, separando as cláusulas iniciais para esse tratamento. No for seguinte, se a célula estiver viva, é feito o cálculo do coeifiente binomial para cada caso possível para uma 
+célula viva:
+- nCr(8, 7): Casos em que 7 das 8 células vizinhas estão vivas, que resultam na célula sobrevivendo na próxima geração (mas não necessariamente sendo válida devido a overpopulation).
+- nCr(8, 2): Casos em que 2 vizinhos estão vivos, que satisfaz as condições de "subvivência".
+- nCr(8, 4): Casos onde 4 vizinhos podem manter a célula viva ou causar transições.
+A função nCr utiliza a fórmula logarítmica para fazer esse cálculo, convertendo a soma logarítmica (double) para um valor inteiro. Caso a célula esteja morta, a função verifyAllNeighborsZero 
+verifica os vizinhos e seus vizinhos e, caso todos sejam zero, adiciona apenas uma cláusula, pois na instância anterior a célula estava morta. Se há algum viziho vivo, é calculado as 
+cláusulas para as combinações com 2 e 3 vizinhos vivos.
+
+Então, é impresso no arquivo de entrada em formato CNF para o SAT Solver com o número de variáveis, número de cláusulas, e peso máximo.
+A função generateBorders é chamada para adicionar as restrições de borda, garantindo que estejam mortas.
+
+Em seguida, é feito a converao das regras de transições lógicas para o arquivo CNF. Se a célula estiver viva, é considerado: casos em que célula tem 7 ou 4 vizinhos vivos, para morrer( generateLoneliness e generateOvercrowding); 
+e casos em que a célula tem exatamente 2 vizinhos vivos, para permanecer viva.
+Se a célula estiver morta, é analisado seus vizinhos e os vizinhos dos vizinhos (verifyAllNeighborsZero), caso todos estejam mortos, ela continua morta. Se exatamente 2 vizinhos estão vivos, ela também permanece morta (generatePreservation).
+Se houver exatamente 3 células vivas, a célula revive (generateLife).
+
+De volta a main, o SAT Solver open-wbo é executado com o arquivo SATinput.txt gerado, e a saída é direcionada para o SAToutput.txt.
+A função readOutputFile faz a leitura do arquivo de saída do SAT Solver e, caso o problema seja UNSAT, a saída é uma matriz zerada.
+Caso não, o arquivo é convertido na matriz resultante, impresso pela função printArrayWithoutBorders.

@@ -5,14 +5,18 @@
 #include "convertFromSAT.h"
 #include "helper.h"
 
-int convertSATtoArray(FILE* file, int** A, int n, int m) {
+void convertSATtoArray(FILE* file, int** A, int n, int m) {
     char line[10000];
     int count = 0;
     while (fgets(line, sizeof(line), file)) {
         // Check if the line is "s UNSATISFIABLE"
         if (strncmp(line, "s UNSATISFIABLE", 15) == 0) {
-            printf("The problem is UNSATISFIABLE.\n");
-            return 0;
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < m; j++) {
+                    A[i][j] = 0;
+                }
+            }
+            return;
         }
         // Check if the line starts with 'v'
         if (line[0] == 'v' && line[1] == ' ') {
@@ -22,7 +26,7 @@ int convertSATtoArray(FILE* file, int** A, int n, int m) {
                     if (!token) {
                         fprintf(stderr, "Error: Not enough values for the array.\n");
                         fclose(file);
-                        return 0;
+                        return;
                     }
                     if (atoi(token) < 0) {
                         A[i][j] = 0;
@@ -37,7 +41,7 @@ int convertSATtoArray(FILE* file, int** A, int n, int m) {
         }
     }
     // printf("Number of 1s: %d\n", count);
-    return 1;
+    return;
 }
 
 void readOutputFile(int n, int m) {
@@ -50,9 +54,9 @@ void readOutputFile(int n, int m) {
     if (outputFile == NULL) {
         fprintf(stderr, "Failed to read file SAToutput.txt\n");
     } else {
-        if (convertSATtoArray(outputFile, arr, n, m)) {
-            printArrayWithoutBorders(arr, n, m);
-        }
+        convertSATtoArray(outputFile, arr, n, m);
+        printf("\n%d %d\n", (n-2), (m-2));
+        printArrayWithoutBorders(arr, n, m);
         fclose(outputFile);
     }
 
