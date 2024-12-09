@@ -55,7 +55,7 @@ void readOutputFile(int n, int m) {
         fprintf(stderr, "Failed to read file SAToutput.txt\n");
     } else {
         convertSATtoArray(outputFile, arr, n, m);
-        printf("\n%d %d\n", (n-2), (m-2));
+        printf("%d %d\n", (n-2), (m-2));
         printArrayWithoutBorders(arr, n, m);
         fclose(outputFile);
     }

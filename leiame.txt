@@ -4,7 +4,7 @@ Alunos:
 
 Jogo da Vida Reverso - SAT Solver
 
-Esse trabalho implementa uma solução para o reverter uma instância do Jogo da Vida de Conway a um estado anterior, minimizando o número de células vivas.
+Esse trabalho implementa uma solução para reverter uma instância do Jogo da Vida de Conway a um estado anterior, minimizando o número de células vivas.
 
 Como executar
 
@@ -12,14 +12,13 @@ Para compilar todos os arquivos necessários:
 
 ./compila-tudo.sh
 
-Para executar, há duas opções: 
+Para executar, há duas opções:
+
 - Utilizar um arquivo .txt com uma matriz, passando-o por parâmetro. Nesse caso, o arquivo .txt deve ser formatado com o tamanho da matriz (linha, coluna) na primeira linha, 
 e em seguida a matriz.
-
 ./conway < arquivo.txt
 
 - Utiliza uma matriz aleatória gerada pelo programa. Nesse caso, é necessário fornecer o tamanho da matriz (linha, coluna) após executar o programa:
-
 ./conway random
 20 20
 
@@ -32,30 +31,21 @@ helper.c
 convertFromSAT.c
 convertToSAT.c
 
-No arquivo main.c, é feito o armazenamento da matriz de entrada e, no caso de matrizes aleatórias, é feito também a geração dessa matriz.Para solucionar corretamente, é considerado 
-uma matriz com as colunas e linhas de borda zeradas, portanto a estrutura extendedArray é criada com a função extendArray, que apenas adiciona as bordas zeradas A matriz original. 
-O arquivo SATinput.txt, usado na resolução do SAT com o SAT Solver, é então criado.
+No arquivo main.c, realiza-se o armazenamento da matriz de entrada. No caso de matrizes geradas aleatoriamente, também é feita sua criação. Para garantir a solução correta do problema, considera-se uma matriz com bordas de tamanho 2 (linhas e colunas) zeradas. Essa borda adicional foi implementada para simplificar o tratamento das bordas no problema. Para isso, é utilizada a estrutura extendedArray, gerada pela função extendArray, que adiciona as bordas zeradas à matriz original. Além disso, o arquivo SATinput.txt, utilizado na resolução do SAT com o SAT Solver, é criado.
 
-É chamada então a função generateSAT com a matriz extendida, onde é convertido a instância de entrada do Jogo da Vida para uma fórmula SAT, em CNF, para ser posteriormente processada 
-pelo SAT Solver. O número de cláusulas - clauseCount, é calculado utilizando o número total de variáveis booleanas no problema (n*m), e as cláusulas adicionais para as bordas da matriz,
-por isso n e m, excluindo os cantos, para não serem contabilizados duas vezes. Nas bordas, as condições são epecíficas para não considerar interações com células que não fazem parte 
-da matriz, separando as cláusulas iniciais para esse tratamento. No for seguinte, se a célula estiver viva, é feito o cálculo do coeifiente binomial para cada caso possível para uma 
-célula viva:
-- nCr(8, 7): Casos em que 7 das 8 células vizinhas estão vivas, que resultam na célula sobrevivendo na próxima geração (mas não necessariamente sendo válida devido a overpopulation).
-- nCr(8, 2): Casos em que 2 vizinhos estão vivos, que satisfaz as condições de "subvivência".
-- nCr(8, 4): Casos onde 4 vizinhos podem manter a célula viva ou causar transições.
-A função nCr utiliza a fórmula logarítmica para fazer esse cálculo, convertendo a soma logarítmica (double) para um valor inteiro. Caso a célula esteja morta, a função verifyAllNeighborsZero 
-verifica os vizinhos e seus vizinhos e, caso todos sejam zero, adiciona apenas uma cláusula, pois na instância anterior a célula estava morta. Se há algum viziho vivo, é calculado as 
-cláusulas para as combinações com 2 e 3 vizinhos vivos.
+A função generateSAT é chamada com a matriz estendida como entrada. Essa função converte a instância do Jogo da Vida em uma fórmula SAT no formato CNF, que será processada pelo SAT Solver. 
 
-Então, é impresso no arquivo de entrada em formato CNF para o SAT Solver com o número de variáveis, número de cláusulas, e peso máximo.
-A função generateBorders é chamada para adicionar as restrições de borda, garantindo que estejam mortas.
+O número de cláusulas (clauseCount) é inicializado com o total de variáveis booleanas no problema (n*m) somados com o número de elementos nas bordas da matriz extendida, referente às cláusulas de minimização e cláusulas de tratamento de bordas.
 
-Em seguida, é feito a converao das regras de transições lógicas para o arquivo CNF. Se a célula estiver viva, é considerado: casos em que célula tem 7 ou 4 vizinhos vivos, para morrer( generateLoneliness e generateOvercrowding); 
-e casos em que a célula tem exatamente 2 vizinhos vivos, para permanecer viva.
-Se a célula estiver morta, é analisado seus vizinhos e os vizinhos dos vizinhos (verifyAllNeighborsZero), caso todos estejam mortos, ela continua morta. Se exatamente 2 vizinhos estão vivos, ela também permanece morta (generatePreservation).
-Se houver exatamente 3 células vivas, a célula revive (generateLife).
+Em seguida, o programa itera a matriz para verificar se cada célula está viva ou morta e somar o número de cláusulas correto. Se uma célula estiver viva, são geradas nCr(8, 7) + nCr(8, 2) + nCr(8, 4) cláusulas, para cada uma das regras do jogo da vida. Se a célula estiver morta, é chamada uma função para verificar se os vizinhos e os vizinhos dessa célula também estão mortos. Caso estejam, apenas uma cláusula é adicionada, pois na instância anterior a célula obrigatoriamente estava morta. Caso contrário, são geradas nCr(8, 2) + nCr(8, 3) cláusulas. A função nCr utiliza a fórmula logarítmica para fazer esse cálculo, convertendo a soma logarítmica (double) para um valor inteiro.
 
-De volta a main, o SAT Solver open-wbo é executado com o arquivo SATinput.txt gerado, e a saída é direcionada para o SAToutput.txt.
-A função readOutputFile faz a leitura do arquivo de saída do SAT Solver e, caso o problema seja UNSAT, a saída é uma matriz zerada.
-Caso não, o arquivo é convertido na matriz resultante, impresso pela função printArrayWithoutBorders.
+Em seguida, o arquivo de entrada é escrito no formato CNF, incluindo o número de variáveis, o número de cláusulas e o peso máximo. Então, são geradas n*m soft clauses para minimizar o número de células vivas. A função generateBorders é chamada para adicionar restrições de borda, garantindo que essas células permaneçam mortas no estado anterior.
+Em seguida, é feita a conversão das regras do jogo da vida para o arquivo CNF. As cláusulas geradas envolvendo combinações correspondem às fórmulas informadas no artigo "Time-Reversal in Conway’s Life as SAT", que codificam o problema de reverter o jogo da vida em um formato adequado para os SAT solvers. As regras são essencialmente essas:
+- Loneliness: se uma célula está viva, então todos os subconjuntos de 7 vizinhos no estado anterior devem conter pelo menos uma célula viva.
+- Stagnation: se uma célula está viva no estado atual e estava morta no estado anterior, então o conjunto de vizinhos vivos no estado anterior não pode ser igual a 2.
+- Overcrowding: se uma célula está viva no estado atual, então todos os subconjuntos de 4 vizinhos no estado anterior devem conter pelo menos uma célula morta.
+- Preservation: se uma célula está morta no estado atual e estava viva no estado anterior, então o conjunto de de vizinhos vivos no estado anterior não pode ser igual a 2.
+- Life: se uma célula está morta no estado atual, então o conjunto de vizinhos vivos no estado anterior não pode ser igual a 3.
+
+Terminada a escrita das clásulas no arquivo SATinput.txt, o SAT Solver open-wbo é executado com o arquivo sendo passado como parâmetro. Após a execução, a saída é direcionada para o SAToutput.txt.
+A função readOutputFile faz a leitura do arquivo de saída do SAT Solver e, caso o problema seja UNSAT, a saída é uma matriz zerada. Caso contrário, as variáveis do problema SAT são convertidas para uma matriz, a qual é exibida na saída padrão pela função printArrayWithoutBorders.
